@@ -16,4 +16,8 @@ module.exports.cardNames = [
     'fl',
     'fls',
     'fqx'
-]
+];
+
+module.exports.events = {
+    CREATE_PLAYER_ID: 'CREATE_PLAYER_ID'
+}

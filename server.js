@@ -1,11 +1,8 @@
 'use strict';
 
 const express = require('express');
-const { Server } = require('ws');
 const cors = require('cors');
-const cards = require('./src/cards');
-const uuidv4 = require('uuid/v4');
-
+const {createServer} = require('./src/ws');
 
 const PORT = process.env.PORT || 3000;
 const INDEX = '/index.html';
@@ -27,23 +24,4 @@ const server = app
   .use((req, res) => res.sendFile(INDEX, { root: __dirname }))
   .listen(PORT, () => console.log(`Listening on ${PORT}`));
 
-const wss = new Server({ server });
-
-wss.on('connection', (ws) => {
-  console.log('Client connected');
-  ws.send(JSON.stringify({
-    id: uuidv4()
-  }));
-  ws.on('message', function (message) {
-    console.log('received: %s', message)
-
-    if(message === 'InitCards') {
-    	console.log('come to init cards')
-    	let initialCards = cards.initCards();
-    	ws.send(`InitCards: ${initialCards.toString()}`);
-    }
-  });
-
-  ws.on('close', () => console.log('Client disconnected'));
-});
-
+createServer(server);
