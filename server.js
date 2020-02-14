@@ -4,6 +4,8 @@ const express = require('express');
 const { Server } = require('ws');
 const cors = require('cors');
 const cards = require('./src/cards');
+const uuidv4 = require('uuid/v4');
+
 
 const PORT = process.env.PORT || 3000;
 const INDEX = '/index.html';
@@ -29,6 +31,9 @@ const wss = new Server({ server });
 
 wss.on('connection', (ws) => {
   console.log('Client connected');
+  ws.send(JSON.stringify({
+    id: uuidv4()
+  }));
   ws.on('message', function (message) {
     console.log('received: %s', message)
 
