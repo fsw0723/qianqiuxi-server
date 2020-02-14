@@ -1,6 +1,5 @@
 const { Server } = require('ws');
 
-const cards = require('./cards');
 const handlers = require('./handlers');
 
 module.exports.createServer = function(server) {
@@ -13,11 +12,7 @@ module.exports.createServer = function(server) {
 		ws.on('message', function (message) {
 			console.log('received: %s', message)
 
-			if(message === 'InitCards') {
-				console.log('come to init cards')
-				let initialCards = cards.initCards();
-				ws.send(`InitCards: ${initialCards.toString()}`);
-			}
+			handlers.handleInitCards(message, ws);
 		});
 
 		ws.on('close', () => console.log('Client disconnected'));

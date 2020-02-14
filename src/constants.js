@@ -19,5 +19,7 @@ module.exports.cardNames = [
 ];
 
 module.exports.events = {
-    CREATE_PLAYER_ID: 'CREATE_PLAYER_ID'
+    CREATE_PLAYER_ID: 'CREATE_PLAYER_ID',
+
+    INIT_CARDS: 'INIT_CARDS'
 }
