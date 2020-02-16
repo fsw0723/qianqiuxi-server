@@ -21,5 +21,6 @@ module.exports.cardNames = [
 module.exports.events = {
     CREATE_PLAYER_ID: 'CREATE_PLAYER_ID',
 
+    PAIRING: 'PAIRING',
     INIT_CARDS: 'INIT_CARDS'
 }
