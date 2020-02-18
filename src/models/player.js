@@ -10,4 +10,8 @@ module.exports = class Player {
 	isWaiting() {
 		return this.status === 'WAITING';
 	}
+
+	setCards() {
+		this.cards = cards;
+	}
 }

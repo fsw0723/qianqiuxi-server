@@ -3,7 +3,6 @@ const uuidv4 = require('uuid/v4');
 const Player = require('./models/player');
 const Game = require('./models/game');
 const constants = require('./constants');
-const cards = require('./cards');
 
 const handleNewPlayer = function(wss, ws) {
 	let uuid = uuidv4();
@@ -27,39 +26,33 @@ const handlePairing = function(wss, ws, message) {
 		  	if (client !== ws && client.readyState === ws.OPEN && client.player.isWaiting()) {
 		  		let gameId = uuidv4();
 				let game = new Game(gameId, ws.player, client.player);
-				client.player.setStatus('START');
-				ws.player.setStatus('START');
+
 				ws.game = game;
 				client.game = game;
 
-				let initialDeck = cards.initCards();
+				game.init();
 
 				ws.send(JSON.stringify({
-					type: 'START',
+					type: constants.events.START,
 					gameId,
 					opponent: client.player.id,
-					deck: initialDeck
+					deck: game.deck,
+					cards: ws.player.cards
 				}));
 
 				client.send(JSON.stringify({
 					type: 'START',
 					gameId,
 					opponent: ws.player.id,
-					deck: initialDeck
+					deck: game.deck,
+					cards: client.player.cards
 				}));
+
+				console.log('----GAME----', game)
 		  	}
 		});
-		// let i = 0;
-		// wss.clients.forEach(function each(client) {
-		  	
-		//   	console.log('----CLIENT----', i);
-		//   	console.log(client.player);
-		//   	console.log(client.game);
-		//   	i++;
-		// });
 	}
-}
-
+};
 
 module.exports = {
 	handleNewPlayer,
