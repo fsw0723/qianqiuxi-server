@@ -23,7 +23,7 @@ module.exports = class Game {
 
 	initDeck() {
 		let cards = [];
-		for(let i = 0; i < 8; i++) {
+		for(let i = 0; i < 10; i++) {
 			let random = Math.round(getRandom(1, this.cardsLeft.length));
 			cards.push(this.cardsLeft[random-1]);
 			this.cardsLeft.splice(random-1, 1);
@@ -39,5 +39,13 @@ module.exports = class Game {
 			this.cardsLeft.splice(random-1, 1);
 		}
 		player.cards = cards;
+	}
+
+	handleSelectCards(cardFromDeck) {
+		this.deck.splice(this.deck.indexOf(cardFromDeck), 1);
+		// Take a new card to deck
+		let random = Math.round(getRandom(1, this.cardsLeft.length));
+		this.deck.push(this.cardsLeft[random-1]);
+		this.cardsLeft.splice(random-1, 1);
 	}
 }

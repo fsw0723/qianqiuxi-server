@@ -19,6 +19,7 @@ const handlePairing = function(wss, ws, message) {
 	// 1. find player in waiting state
 	// 2. create new Game and update both player
 	// 3. Send data to both clients
+	// if(message.includes('PAIRING')) {
 	if(message.type === constants.events.PAIRING) {
 		ws.player.setStatus('WAITING');
 
@@ -54,7 +55,46 @@ const handlePairing = function(wss, ws, message) {
 	}
 };
 
+const handleSelectCard = function(wss, ws, message) {
+	// if(message.includes('SELECT_CARD')) {
+	if(message.type === constants.events.SELECT_CARD) {
+
+		// let {newPairs, score} = ws.player.handleSelectCards(ws.player.cards[0], ws.game.deck[0]);
+		// ws.game.handleSelectCards(ws.game.deck[0]);
+		let {newPairs, score} = ws.player.handleSelectCards(message.selectedOwnCard, message.selectedCardFromDeck);
+		ws.game.handleSelectCards(message.selectedCardFromDeck);
+
+
+		wss.clients.forEach(function each(client) {
+		  	if (client !== ws && client.readyState === ws.OPEN && client.game.id === ws.game.id) {
+				ws.send(JSON.stringify({
+					type: 'CARD_SELECTED',
+					gameId: ws.game.id,
+					score: ws.player.score,
+					opponentScore: client.player.score,
+					deck: ws.game.deck,
+					cards: ws.player.cards,
+					newPairs
+				}));
+
+				client.send(JSON.stringify({
+					type: 'OPPONENT_CARD_SELECTED',
+					gameId: ws.game.id,
+					score: client.player.score,
+					opponentScore: ws.player.score,
+					deck: ws.game.deck,
+					cards: client.player.cards,
+					newPairs
+				}));
+	  		}
+		});
+
+		
+	}
+};
+
 module.exports = {
 	handleNewPlayer,
-	handlePairing
+	handlePairing,
+	handleSelectCard
 }

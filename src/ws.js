@@ -10,7 +10,6 @@ function heartbeat() {
 
 module.exports.createServer = function(server) {
 	const wss = new Server({ server });
-	wss.games = [];
 
 	wss.on('connection', (ws) => {		
 		ws.isAlive = true;
@@ -21,7 +20,9 @@ module.exports.createServer = function(server) {
 			console.log(`[${new Date()}]received: %s`, message)
 
 			message = JSON.parse(message);
+			
 			handlers.handlePairing(wss, ws, message);
+			handlers.handleSelectCard(wss, ws, message);
 		});
 
 		ws.on('close', () => console.log('Client disconnected', new Date()));
