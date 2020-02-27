@@ -66,7 +66,7 @@ const handleSelectCard = function(wss, ws, message) {
 
 
 		wss.clients.forEach(function each(client) {
-		  	if (client !== ws && client.readyState === ws.OPEN && client.game.id === ws.game.id) {
+		  	if (client !== ws && client.readyState === ws.OPEN && client.game && client.game.id === ws.game.id) {
 				ws.send(JSON.stringify({
 					type: 'CARD_SELECTED',
 					gameId: ws.game.id,

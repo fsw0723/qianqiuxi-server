@@ -19,10 +19,15 @@ module.exports.createServer = function(server) {
 		ws.on('message', function (message) {
 			console.log(`[${new Date()}]received: %s`, message)
 
-			message = JSON.parse(message);
-			
-			handlers.handlePairing(wss, ws, message);
-			handlers.handleSelectCard(wss, ws, message);
+			try {
+				message = JSON.parse(message);
+
+				handlers.handlePairing(wss, ws, message);
+				handlers.handleSelectCard(wss, ws, message);
+			} catch(error) {
+				console.error(error);
+			}
+		
 		});
 
 		ws.on('close', () => console.log('Client disconnected', new Date()));
