@@ -17,6 +17,7 @@ module.exports = class Player {
 		this.score = 0;
 		this.selectedCards = [];
 		this.pairs = [];
+		this.cards = [];
 	}
 
 	setStatus(status) {

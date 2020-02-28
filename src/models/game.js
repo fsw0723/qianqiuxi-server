@@ -23,7 +23,7 @@ module.exports = class Game {
 
 	initDeck() {
 		let cards = [];
-		for(let i = 0; i < 10; i++) {
+		for(let i = 0; i < 8; i++) {
 			let random = Math.round(getRandom(1, this.cardsLeft.length));
 			cards.push(this.cardsLeft[random-1]);
 			this.cardsLeft.splice(random-1, 1);
@@ -33,7 +33,7 @@ module.exports = class Game {
 
 	initPlayerCards(player) {
 		let cards = [];
-		for(let i = 0; i < 8; i++) {
+		for(let i = 0; i < 10; i++) {
 			let random = Math.round(getRandom(1, this.cardsLeft.length));
 			cards.push(this.cardsLeft[random-1]);
 			this.cardsLeft.splice(random-1, 1);
@@ -47,5 +47,14 @@ module.exports = class Game {
 		let random = Math.round(getRandom(1, this.cardsLeft.length));
 		this.deck.push(this.cardsLeft[random-1]);
 		this.cardsLeft.splice(random-1, 1);
+		return this.cardsLeft[random-1];
+	}
+
+	isGameOver() {
+		return this.playerA.cards.length === 0 && this.playerB.cards.length === 0;
+	}
+
+	getWinner() {
+		return this.playerA.score > this.playerB.score ? this.playerA.id : this.playerB.id;
 	}
 }

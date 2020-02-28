@@ -36,17 +36,21 @@ const handlePairing = function(wss, ws, message) {
 				ws.send(JSON.stringify({
 					type: constants.events.START,
 					gameId,
-					opponent: client.player.id,
+					id: ws.player.id,
+					opponentId: client.player.id,
 					deck: game.deck,
-					cards: ws.player.cards
+					cards: ws.player.cards,
+					turn: ws.player.id
 				}));
 
 				client.send(JSON.stringify({
 					type: 'START',
 					gameId,
-					opponent: ws.player.id,
+					id: client.player.id,
+					opponentId: ws.player.id,
 					deck: game.deck,
-					cards: client.player.cards
+					cards: client.player.cards,
+					turn: ws.player.id
 				}));
 
 				console.log('----GAME----', game)
@@ -63,24 +67,33 @@ const handleSelectCard = function(wss, ws, message) {
 		// ws.game.handleSelectCards(ws.game.deck[0]);
 		let {newPairs, score} = ws.player.handleSelectCards(message.selectedOwnCard, message.selectedCardFromDeck);
 		let newDeckCard = ws.game.handleSelectCards(message.selectedCardFromDeck);
-
+		let isGameOver = ws.game.isGameOver();
+		let winner;
+		if(isGameOver) {
+			winner = ws.game.getWinner();
+		}
 
 		wss.clients.forEach(function each(client) {
 		  	if (client !== ws && client.readyState === ws.OPEN && client.game && client.game.id === ws.game.id) {
 				ws.send(JSON.stringify({
 					type: 'CARD_SELECTED',
 					gameId: ws.game.id,
+					id: ws.player.id,
 					score: ws.player.score,
 					opponentScore: client.player.score,
 					deck: ws.game.deck,
 					cards: ws.player.cards,
 					newDeckCard,
-					newPairs
+					newPairs,
+					isGameOver,
+					turn: client.player.id,
+					winner
 				}));
 
 				client.send(JSON.stringify({
 					type: 'OPPONENT_CARD_SELECTED',
 					gameId: ws.game.id,
+					id: client.player.id,
 					score: client.player.score,
 					opponentScore: ws.player.score,
 					opponentSelectedOwnCard: message.selectedOwnCard,
@@ -88,7 +101,10 @@ const handleSelectCard = function(wss, ws, message) {
 					deck: ws.game.deck,
 					cards: client.player.cards,
 					newDeckCard,
-					newPairs
+					newPairs,
+					isGameOver,
+					turn: client.player.id,
+					winner
 				}));
 	  		}
 		});
