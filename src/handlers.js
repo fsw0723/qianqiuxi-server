@@ -62,7 +62,7 @@ const handleSelectCard = function(wss, ws, message) {
 		// let {newPairs, score} = ws.player.handleSelectCards(ws.player.cards[0], ws.game.deck[0]);
 		// ws.game.handleSelectCards(ws.game.deck[0]);
 		let {newPairs, score} = ws.player.handleSelectCards(message.selectedOwnCard, message.selectedCardFromDeck);
-		ws.game.handleSelectCards(message.selectedCardFromDeck);
+		let newDeckCard = ws.game.handleSelectCards(message.selectedCardFromDeck);
 
 
 		wss.clients.forEach(function each(client) {
@@ -74,6 +74,7 @@ const handleSelectCard = function(wss, ws, message) {
 					opponentScore: client.player.score,
 					deck: ws.game.deck,
 					cards: ws.player.cards,
+					newDeckCard,
 					newPairs
 				}));
 
@@ -82,8 +83,11 @@ const handleSelectCard = function(wss, ws, message) {
 					gameId: ws.game.id,
 					score: client.player.score,
 					opponentScore: ws.player.score,
+					opponentSelectedOwnCard: message.selectedOwnCard,
+					opponentSelectedDeckCard: message.selectedCardFromDeck,
 					deck: ws.game.deck,
 					cards: client.player.cards,
+					newDeckCard,
 					newPairs
 				}));
 	  		}
