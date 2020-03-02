@@ -32,6 +32,10 @@ module.exports = class Player {
 		this.cards = cards;
 	}
 
+	addCard(card) {
+		this.cards.push(card);
+	}
+
 	addScore(score) {
 		this.score += score;
 	}
@@ -56,5 +60,9 @@ module.exports = class Player {
 			newPairs,
 			score
 		}
+	}
+
+	handleDiscardCard(cardToDiscard) {
+		this.cards.splice(this.cards.indexOf(cardToDiscard), 1);
 	}
 }

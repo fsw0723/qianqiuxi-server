@@ -24,6 +24,7 @@ module.exports.createServer = function(server) {
 
 				handlers.handlePairing(wss, ws, message);
 				handlers.handleSelectCard(wss, ws, message);
+				handlers.handleDiscardCard(wss, ws, message);
 			} catch(error) {
 				console.error(error);
 			}

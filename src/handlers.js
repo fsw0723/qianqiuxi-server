@@ -44,7 +44,7 @@ const handlePairing = function(wss, ws, message) {
 				}));
 
 				client.send(JSON.stringify({
-					type: 'START',
+					type: constants.events.START,
 					gameId,
 					id: client.player.id,
 					opponentId: ws.player.id,
@@ -113,8 +113,39 @@ const handleSelectCard = function(wss, ws, message) {
 	}
 };
 
+const handleDiscardCard = function(wss, ws, message) {
+	if(message.type === 'DISCARD_CARD') {
+		wss.clients.forEach(function each(client) {
+		  	if (client !== ws && client.readyState === ws.OPEN && client.game && client.game.id === ws.game.id) {
+		  		let {newCard} = ws.game.handleDiscardCard(message.cardToDiscard, ws.player);
+		  		console.log('NEW CARD...', newCard);
+
+				ws.send(JSON.stringify({
+					type: 'CARD_DISCARDED',
+					gameId: ws.game.id,
+					id: ws.player.id,
+					deck: ws.game.deck,
+					cards: ws.player.cards,
+					newCard
+				}));
+
+				client.send(JSON.stringify({
+					type: 'OPPONENT_CARD_DISCARDED',
+					gameId: client.game.id,
+					id: client.player.id,
+					deck: ws.game.deck,
+					cardDiscarded: message.cardToDiscard
+				}));
+		  	}
+	  	});
+		
+	}
+
+};
+
 module.exports = {
 	handleNewPlayer,
 	handlePairing,
-	handleSelectCard
+	handleSelectCard,
+	handleDiscardCard
 }

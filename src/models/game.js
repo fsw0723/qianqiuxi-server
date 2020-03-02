@@ -50,6 +50,16 @@ module.exports = class Game {
 		return this.cardsLeft[random-1];
 	}
 
+	handleDiscardCard(cardToDiscard, player) {
+		player.handleDiscardCard(cardToDiscard);
+		this.deck.push(cardToDiscard);
+		let random = Math.round(getRandom(1, this.cardsLeft.length));
+		let newCard = this.cardsLeft[random-1];
+		player.addCard(newCard);
+		this.cardsLeft.splice(random-1, 1);
+		return {newCard: newCard}
+	}
+
 	isGameOver() {
 		return this.playerA.cards.length === 0 && this.playerB.cards.length === 0;
 	}
