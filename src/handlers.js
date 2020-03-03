@@ -118,7 +118,6 @@ const handleDiscardCard = function(wss, ws, message) {
 		wss.clients.forEach(function each(client) {
 		  	if (client !== ws && client.readyState === ws.OPEN && client.game && client.game.id === ws.game.id) {
 		  		let {newCard} = ws.game.handleDiscardCard(message.cardToDiscard, ws.player);
-		  		console.log('NEW CARD...', newCard);
 
 				ws.send(JSON.stringify({
 					type: 'CARD_DISCARDED',
