@@ -13,6 +13,8 @@ module.exports = class Game {
 	};
 
 	init() {
+		this.playerA.reset();
+		this.playerB.reset();
 		this.playerA.setStatus('START');
 		this.playerB.setStatus('START');
 

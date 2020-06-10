@@ -14,6 +14,10 @@ const includePair = function(pairCards, existingCards) {
 module.exports = class Player {
 	constructor(id) {
 		this.id = id;
+		this.reset();
+	}
+
+	reset() {
 		this.score = 0;
 		this.selectedCards = [];
 		this.pairs = [];
