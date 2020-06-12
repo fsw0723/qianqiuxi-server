@@ -53,7 +53,6 @@ const handlePairing = function(wss, ws, message) {
 					turn: ws.player.id
 				}));
 
-				console.log('----GAME----', game)
 		  	}
 		});
 	}
@@ -76,7 +75,7 @@ const handleSelectCard = function(wss, ws, message) {
 		wss.clients.forEach(function each(client) {
 		  	if (client !== ws && client.readyState === ws.OPEN && client.game && client.game.id === ws.game.id) {
 				ws.send(JSON.stringify({
-					type: 'CARD_SELECTED',
+					type: constants.events.CARD_SELECTED,
 					gameId: ws.game.id,
 					id: ws.player.id,
 					score: ws.player.score,
@@ -91,7 +90,7 @@ const handleSelectCard = function(wss, ws, message) {
 				}));
 
 				client.send(JSON.stringify({
-					type: 'OPPONENT_CARD_SELECTED',
+					type: constants.events.OPPONENT_CARD_SELECTED,
 					gameId: ws.game.id,
 					id: client.player.id,
 					score: client.player.score,
@@ -114,13 +113,13 @@ const handleSelectCard = function(wss, ws, message) {
 };
 
 const handleDiscardCard = function(wss, ws, message) {
-	if(message.type === 'DISCARD_CARD') {
+	if(message.type === constants.events.DISCARD_CARD) {
 		wss.clients.forEach(function each(client) {
 		  	if (client !== ws && client.readyState === ws.OPEN && client.game && client.game.id === ws.game.id) {
 		  		let {newCard} = ws.game.handleDiscardCard(message.cardToDiscard, ws.player);
 
 				ws.send(JSON.stringify({
-					type: 'CARD_DISCARDED',
+					type: constants.events.CARD_DISCARDED,
 					gameId: ws.game.id,
 					id: ws.player.id,
 					deck: ws.game.deck,
@@ -129,7 +128,7 @@ const handleDiscardCard = function(wss, ws, message) {
 				}));
 
 				client.send(JSON.stringify({
-					type: 'OPPONENT_CARD_DISCARDED',
+					type: constants.events.OPPONENT_CARD_DISCARDED,
 					gameId: client.game.id,
 					id: client.player.id,
 					deck: ws.game.deck,
@@ -142,9 +141,22 @@ const handleDiscardCard = function(wss, ws, message) {
 
 };
 
+const notifyOpponent = function(wss, ws, eventName) {
+	wss.clients.forEach(function each(client) {
+	  	if (client !== ws && client.readyState === ws.OPEN && client.game && client.game.id === ws.game.id) {
+	  		client.send(JSON.stringify({
+	  			type: eventName,
+	  			gameId: client.game.id,
+	  			id: client.player.id
+	  		}));
+	  	}
+  	});
+};
+
 module.exports = {
 	handleNewPlayer,
 	handlePairing,
 	handleSelectCard,
-	handleDiscardCard
+	handleDiscardCard,
+	notifyOpponent
 }

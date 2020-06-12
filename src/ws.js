@@ -1,5 +1,6 @@
 const { Server } = require('ws');
 
+const constants = require('./constants');
 const handlers = require('./handlers');
 
 function noop() {}
@@ -31,13 +32,18 @@ module.exports.createServer = function(server) {
 		
 		});
 
-		ws.on('close', () => console.log('Client disconnected', new Date()));
+		ws.on('close', () => {
+			console.log('Client disconnected', new Date());
+			handlers.notifyOpponent(wss, ws, constants.events.OPPONENT_OFFLINE);
+		});
 	});
 
 	const interval = setInterval(function ping() {
 	  	wss.clients.forEach(function each(ws) {
-		    if (ws.isAlive === false) return ws.terminate();
-
+		    if (ws.isAlive === false) {
+		    	handlers.notifyOpponent(wss, ws, constants.events.OPPONENT_OFFLINE);
+		    	return ws.terminate();
+		    }
 		    ws.isAlive = false;
 		    ws.ping(noop);
 	  	});
